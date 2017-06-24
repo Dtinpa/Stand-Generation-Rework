@@ -1,0 +1,142 @@
+
+<!--Stand Generator versions 2.00
+	
+	Email: dft29@drexel.edu
+	Author: Dana Fenton Thompson
+	
+	Changes:
+	1. Implemented the Itunes search functionality
+	2. Got around the Same-Origin Access policy using Whatever-Origin
+	3. Got CSS up so the site doesn't look too bad
+	
+-->
+
+
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>JoJo's Bizarre Stand Generator</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+
+<script type="text/javascript" src="ItunesAPIHandler.js"></script>
+<script type="text/javascript" src="StandInformationGenerator.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	
+
+<link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="header">
+	<h1><font color="#000000">Stand Generator</font></h1>
+</div>
+<div id="menu">
+	<ul>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation-Overdrive.html">Stand Generator</a></li>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation-Purpose.html">Purpose</a></li>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation.html">Old version</a></li>
+	</ul>
+</div>
+<div id="content">
+	<div id="left">
+		The way this works is:
+		<ol>
+		<li>In the first textbox, enter the name of an artist and/or the name of one of their albums and click "Generate Name".</li>
+		<li>If the Name is correct, click the "Generate Stand" button.</li>
+		<li>Stats are ranked A-E.</li>
+		</ol>
+		<br />
+		<br /> 
+		Enter the artist's name and the album you wish to use (e.g. Gorillaz Demon Days):<br />
+		<input type="text" id="search-keyword" size="52" title="Enter Search Keyword" />
+		<br />
+		<!--In case of emergency, break comment tags-->
+		<!--<br />
+		<b>There is an issue with the connection to the power database.  Visit the old version of the site located in the navigation bar above if your stand doesn't generate in a reasonable amount of time.</b>
+		<br />-->
+		<br />
+		<input type="button" value="Generate Stand" onclick="generateStand();" />
+		<br />
+		<br />
+		<a id="Ability" href="" style="color:red;" target="_blank">Link to Ability Page</a>
+		<br />
+		<br />
+		<textarea id = "Stand" rows="20" cols = "40"></textarea>
+		<br />
+		<br />
+		<br />
+		<br />
+		<b><font size="6.5">Now go forth and Stand Proud!</font></b>
+	</body>
+	<div />
+	<!-- Start of StatCounter Code for Default Guide -->
+	<script type="text/javascript">
+	var sc_project=9963285; 
+	var sc_invisible=1; 
+	var sc_security="32e1150c"; 
+	var scJsHost = (("https:" == document.location.protocol) ?
+	"https://secure." : "http://www.");
+	document.write("<sc"+"ript type='text/javascript' src='" +
+	scJsHost+
+	"statcounter.com/counter/counter.js'></"+"script>");
+	</script>
+	<noscript><div class="statcounter"><a title="click tracking"
+	href="http://statcounter.com/" target="_blank"><img
+	class="statcounter"
+	src="http://c.statcounter.com/9963285/0/32e1150c/1/"
+	alt="click tracking"></a></div></noscript>
+	<!-- End of StatCounter Code for Default Guide -->
+</div>
+</body>
+	
+	
+<script type="text/javascript">
+						
+	function generateStand() 
+	{
+		//Creates and formats the url for the ability
+		var url = 'http://powerlisting.wikia.com/wiki/'				
+		
+		//This segment uses a website that is able to bypass the same origin policy.  It retrieves the html of the web page I specified in the "encodeURICompenent" function.
+		//The title of the webpage, which holds the name of the power, is extracted and used as the abilities name.
+				
+		$.getJSON('http://whateverorigin.org/get?url=' + encodeURIComponent('http://powerlisting.wikia.com/wiki/Special:Random') + '&callback=?', function(data){
+				
+			var siteContents = data.contents;
+			alert(siteContents);
+			//Finds the meta tag that holds the description of the power.  1 is added to descriptionStart because the first character is a quote
+			var powerDescription = parsePowerDescription(siteContents);
+			
+			//retrieves the title of the page, which is the ability, and runs a series of validation checks on the result for formatting
+			var abilityTitle = (/<title>(.*?)<\/title>/m).exec(siteContents)[1];
+			var abilityName = validateAbilityName(abilityTitle);
+			
+			var bandName = document.getElementById('search-keyword').value;
+			url = url + abilityName.replace(/ /g, '_')
+			
+			//retrieves the JSON data from the Itunes API request and formats the stand information to the user
+			standGeneration(bandName).success(function(standNameJSON){
+				//generates the stats and combines the retrieved data thus far into the stand
+				var stand = concatStandAttributes(standNameJSON, bandName, abilityName, url, powerDescription);
+				
+				//link to the power page and display Stand information
+				document.getElementById('Ability').href = url;
+				document.getElementById('Stand').value = stand;
+			});
+		});		
+	}
+
+</script>
+		<!--Google Analytics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53823309-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</html>

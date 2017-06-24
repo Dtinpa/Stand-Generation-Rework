@@ -1,0 +1,30 @@
+<html>
+	<title>Unit Test Results:</title>
+	<body id="parentID"></body>
+	<script type="text/javascript">
+	
+		function test() {
+			var parserResults = powerParser();
+			for(i = 0; i < parserResults.length; i++) {
+				document.getElementById("parentID").appendChild("<div> Test" + (i + 1) + "returned: " + parserResults[i]);
+			}
+		}
+		
+		function powerParser() {
+			function inputCheck(actual, expected) {
+				var result = parsePowerDescription(actual);
+				return result == expected;
+			}
+			
+			var testResults = [];
+			var valid = "aoirygogr''\"\"sqaet og:description aauiwrhaaib :content iaurg \"the ability is this\" />";
+			var noOgTag = "aoirygogr''\"\"sqaet aauiwrhaaib :content iaurg \"the ability is this\" />";
+			testResults.push(inputCheck(valid, "the ability is this"));
+			testResults.push(inputCheck(noOgTag, ""));
+			return testResults;
+		}
+		
+		window.onload = test();
+	
+	</script>
+</html>
