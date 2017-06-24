@@ -1,0 +1,221 @@
+<!--Stand Generator versions 1.36
+	
+	Email: dft29@drexel.edu
+	Author: Dana Fenton Thompson
+	
+	This is an older version of the home page.  This page was created in-case Whatever-Origin goes down.  That way, people can still make a stand.
+	
+	Changes:
+	1. Implemented the Itunes search functionality
+	2. Got CSS up so the site doesn't look too bad
+	
+-->
+
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>JoJo's Bizarre Stand Generator</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
+		
+		<script type="text/javascript">
+		//Kept as a Global variable so different functions have access to the same index value, name, and ability value
+			var index;
+			var Name = [];
+			var ability = '';
+			
+			//Formats the users request to suite a url
+			function urlEncode(obj) 
+			{
+				var s = '';
+				for (var key in obj) 
+				{
+					s += encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]) + '&';
+				}
+				if (s.length > 0) 
+				{
+					s = s.substr(0, s.length - 1);
+				}
+
+				return (s);
+			}
+			
+			//Executes the search based on what the user is searching for
+			function standGeneration() 
+			{	
+				var params = 
+				{
+					term: document.getElementById('search-keyword').value,
+					callback: 'handleTunesSearchResults'
+				};
+				var params = urlEncode(params);
+
+				var url = 'http://itunes.apple.com/search?' + params;
+				var html = '<script src="' + url + '"><\/script>';
+				jQuery('head').append(html);
+			}
+			
+			//Used to store all names from the albums into an array that is a global variable
+			function handleTunesSearchResults(arg) 
+			{
+				var results = arg.results;
+				//Deletes all entries in the array just to make sure that no entries are leftover.  I think that was an issue.
+				Name = []
+				var html = '';
+				for (var i = 0; i < results.length; i++) 
+				{
+					var item = results[i];
+					var obj =
+					{
+						source: 0,
+						track_name: item.trackCensoredName,
+					};
+					Name[i] = obj.track_name;
+					
+					//gets rid of useless descriptions in parenthesis
+					if(Name[i].indexOf("(") != -1)
+					{
+						Name[i] = Name[i].substr(0,Name[i].indexOf("("))
+					}
+				}
+				
+				index = Math.floor((Math.random() * (Name.length - 1)) + 0);
+				while(Name[index] == "Intro")
+				{
+					index = Math.floor((Math.random() * (Name.length - 1)) + 0);
+				}
+				document.getElementById('Name').value = Name[index];
+			}
+			
+			//Formats the name of the ability in order to use it to create the url
+			function toTitleCase()
+			{
+				ability = document.getElementById('Ability').value
+				
+				ability = ability.trim();
+				return ability.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+			}
+			
+			//Combines the information given by the user to create a Stand.
+			function Dio() 
+			{
+				//Creates and formats the url for the ability
+				var url = 'http://powerlisting.wikia.com/wiki/'
+				ability = toTitleCase();
+				
+				//If the word "DNA" is apart of the ability, it would have been reduced to "Dna" thanks to the toTitleCase().  This if loop reverses that effect. 
+				if(ability.charAt(0) == "D" && ability.charAt(1) == "n" && ability.charAt(2) == "a")
+				{
+					ability = ability.replace("Dna", "DNA");
+				}
+				
+				url = url + ability.replace(/ /g, '_');
+				
+				<!--Generation of a Stand's stats
+				<!--An Array of Stat values
+				var Stats = ["A", "B", "C", "D", "E"];
+				var power = Math.floor((Math.random() * 4) + 0)
+				var speed = Math.floor((Math.random() * 4) + 0)
+				var range = Math.floor((Math.random() * 4) + 0)
+				var durability = Math.floor((Math.random() * 4) + 0)
+				var precision = Math.floor((Math.random() * 4) + 0)
+				var potential = Math.floor((Math.random() * 4) + 0)
+				
+				//If the person didn't enter an ability, then the ability section and url section of the output will be replaced with filler text with instructions
+				
+				if(ability == '')
+				{
+					ability = 'Enter Ability Here';
+					url = 'Enter Ability Url Here';
+				}
+				document.getElementById('Stand').value = 'Stand Name: ' + Name[index] + '\n\nStand Ability: [' + ability + '](' + url + ') \n\nPower - ' + Stats[power] + '\n\nSpeed - ' + Stats[speed] + '\n\nRange - ' + Stats[range] + '\n\nDurability - ' + Stats[durability] + '\n\nPrecision - ' + Stats[precision] + '\n\nPotential - ' + Stats[potential];
+			}			
+		</script>
+				<!--Google Analytics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53823309-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	</head>
+
+	<body>
+		<link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="header">
+	<h1><font color="#000000">Stand Generator</font></h1>
+</div>
+<div id="menu">
+	<ul>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation-Overdrive.html">Stand Generator</a></li>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation-Purpose.html">Purpose</a></li>
+		<li><a href="http://www.pages.drexel.edu/~dft29/Stand_Generator/Stand-Generation.html">Old version</a></li>
+	</ul>
+</div>
+<div id="content">
+	<div id="left">
+		The way this works is:
+		<ol>
+		<li>Click the link, and, In the first text box, copy and paste the name of the ability from the that page into it</li>
+		<li>In the second textbox, enter the name of an artist and the name of one of their albums to generate a name.</li>
+		<li>Click the button titled "Generate Name" to generate the name of your stand.</li>
+		<li>The second textbox is there for you to check if the name is correct.  <b>You cannot skip this process.</b></li>
+		<li>Click the button called "Generate Stand" to generate the Stand's name, ability, and stats in a format suited for the reddit comment box.</li>
+		</ol>
+		Stats rank from A to E; A being the best and E being the worst.
+		<br />
+		<br /> 
+		<a target="_blank" href="http://powerlisting.wikia.com/wiki/Special:Random">Click the link for your Stand ability.</a>
+		<br />
+		Enter the name of your ability in this box (e.g. Beam Blade Emission):
+		<br />
+		<input type="text" id="Ability" size="52"/>
+		<br />
+		<br />
+		Please enter the artist's name and the album you wish to use (e.g. Gorillaz Demon Days):<br />
+		<input type="text" id="search-keyword" size="52" title="Enter Search Keyword" />
+		<br />
+		<br />
+		Expected Name (Press the "Generate Name" button again if its wrong):
+		<br />
+		<input type="text" id="Name" size="52" title="Name Check" />
+		<br />
+		<input type="button" value="Generate Name" onclick="standGeneration();" />
+		<br />
+		<br />
+		<br />
+		<input type="button" value="Generate Stand" onclick="Dio();" />
+		<br />
+		<br />
+		<textarea id = "Stand" rows="20" cols = "40"></textarea>
+		<br />
+		<br />
+		<b><font size="6.5">Now go forth and Stand Proud!</font></b>
+	</body>
+	<div />
+	<div />
+	<!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=9963285; 
+var sc_invisible=1; 
+var sc_security="32e1150c"; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("<sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="click tracking"
+href="http://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="http://c.statcounter.com/9963285/0/32e1150c/1/"
+alt="click tracking"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+</html>
